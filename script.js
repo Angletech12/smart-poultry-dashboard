@@ -11,13 +11,20 @@ const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebas
 // Function to fetch temperature
 async function fetchTemperature() {
     try {
-        const response = await fetch(FIREBASE_DB_URL);
+        const response = await fetch(FIREBASE_DB_URL, { cache: "no-cache" });
         if (!response.ok) throw new Error("Network response was not OK");
 
         const temp = await response.json();
+        if (temp === null) {
+            document.getElementById('temp').textContent = "-- °C";
+            document.getElementById('sysmsg').textContent = "No temperature data";
+            return;
+        }
+
         document.getElementById('temp').textContent = parseFloat(temp).toFixed(2) + " °C";
         document.getElementById('last').textContent = new Date().toLocaleTimeString();
         document.getElementById('sysmsg').textContent = "OK";
+
     } catch (error) {
         console.error("Firebase fetch error:", error);
         document.getElementById('sysmsg').textContent = "Error fetching temperature";
