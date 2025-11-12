@@ -3,24 +3,76 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Poultry Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 { color: #06b6d4; }
+    .card {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 30px;
+      width: 300px;
+      margin: 30px auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    #temp {
+      font-size: 48px;
+      font-weight: bold;
+      color: #22d3ee;
+    }
+    #motion {
+      font-size: 36px;
+      font-weight: bold;
+      color: #facc15; /* yellow for motion */
+    }
+    #sysmsg {
+      margin-top: 10px;
+      font-size: 16px;
+      color: #f87171; /* red for error */
+    }
+    #last {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #94a3b8; /* gray */
+    }
+    #log {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 12px;
+      height: 120px;
+      overflow-y: scroll;
+      background: #1e293b;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 
 <body>
   <h1>Smart Poultry System</h1>
+
   <div class="card">
     <h2>Temperature</h2>
     <div id="temp">-- °C</div>
-    <div id="last">--:--:--</div>
-    <div id="sysmsg">Loading...</div>
   </div>
 
   <div class="card">
-    <h3>Debug Log</h3>
-    <div id="log">Waiting for data..</div>
+    <h2>Motion Detection</h2>
+    <div id="motion">--</div>
   </div>
 
-  <!-- Link to the JS script -->
+  <div id="sysmsg">Loading...</div>
+  <div id="last">--:--:--</div>
+
+  <h3>Debug Log</h3>
+  <pre id="log">Waiting for data..</pre>
+
+  <!-- Link to JS -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
