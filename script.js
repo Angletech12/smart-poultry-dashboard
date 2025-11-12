@@ -4,41 +4,47 @@ function log(s) {
     logEl.textContent = t + '  ' + s + "\n" + logEl.textContent; 
 }
 
-// Firebase Realtime Database REST URL for temperature
-const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/status/temperature.json";
+// Firebase Realtime Database REST URL
+const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/status.json";
 
-async function fetchTemperature() {
-    console.log("Fetching temperature...");
-    log("Fetching temperature from Firebase...");
+// Fetch temperature and motion
+async function fetchStatus() {
+    console.log("Fetching status...");  
+    log("Fetching status from Firebase...");  
 
     try {
         const response = await fetch(FIREBASE_DB_URL, { cache: "no-cache" });
-        console.log("HTTP response status:", response.status);
-        log("HTTP response status: " + response.status);
+        console.log("HTTP response status:", response.status);  
 
         if (!response.ok) throw new Error("Network response was not OK");
 
-        const tempObj = await response.json();
-        console.log("Fetched value from Firebase:", tempObj);
-        log("Fetched value: " + JSON.stringify(tempObj));
+        const data = await response.json();
+        console.log("Fetched value from Firebase:", data);  
 
-        if (!tempObj || tempObj.temperature === undefined) {
+        // Update temperature
+        if (data.temperature != null) {
+            document.getElementById('temp').textContent = parseFloat(data.temperature).toFixed(2) + " °C";
+        } else {
             document.getElementById('temp').textContent = "-- °C";
-            document.getElementById('sysmsg').textContent = "No temperature data";
-            return;
         }
 
-        document.getElementById('temp').textContent = parseFloat(tempObj.temperature).toFixed(2) + " °C";
+        // Update motion
+        if (data.motion != null) {
+            document.getElementById('motion').textContent = data.motion ? "Detected" : "No Motion";
+        } else {
+            document.getElementById('motion').textContent = "--";
+        }
+
         document.getElementById('last').textContent = new Date().toLocaleTimeString();
         document.getElementById('sysmsg').textContent = "OK";
 
     } catch (error) {
         console.error("Firebase fetch error:", error);
         log("Firebase fetch error: " + error);
-        document.getElementById('sysmsg').textContent = "Error fetching temperature";
+        document.getElementById('sysmsg').textContent = "Error fetching data";
     }
 }
 
-// Fetch immediately, then every 5 seconds
-fetchTemperature();
-setInterval(fetchTemperature, 5000);
+// Refresh every 5 seconds
+fetchStatus();
+setInterval(fetchStatus, 5000);
