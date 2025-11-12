@@ -1,32 +1,30 @@
-// Import Firebase SDK modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+<script>
+const logEl = document.getElementById('log');
+function log(s) { 
+    let t = new Date().toLocaleTimeString(); 
+    logEl.textContent = t + '  ' + s + "\n" + logEl.textContent; 
+}
 
-// Your Firebase config (from Firebase Console)
-const firebaseConfig = {
-  apiKey: "AIzaSyD9XrqScA2ChFSJRny8BfoRnAH4oqIKne4",
-  authDomain: "smart-poultry-system-df992.firebaseapp.com",
-  databaseURL: "https://smart-poultry-system-df992-default-rtdb.firebaseio.com",
-  projectId: "smart-poultry-system-df992",
-  storageBucket: "smart-poultry-system-df992.firebasestorage.app",
-  messagingSenderId: "808441444758",
-  appId: "1:808441444758:web:a2a75bdf39ad11ccb805b7",
-  measurementId: "G-ZLN4YBTSW3"
-};
+// Firebase Realtime Database REST URL for temperature
+const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/status/temperature.json";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// Function to fetch temperature
+async function fetchTemperature() {
+    try {
+        const response = await fetch(FIREBASE_DB_URL);
+        if (!response.ok) throw new Error("Network response was not OK");
 
-// Reference to your temperature data in Firebase
-const tempRef = ref(db, "status/temperature");
+        const temp = await response.json();
+        document.getElementById('temp').textContent = parseFloat(temp).toFixed(2) + " °C";
+        document.getElementById('last').textContent = new Date().toLocaleTimeString();
+        document.getElementById('sysmsg').textContent = "OK";
+    } catch (error) {
+        console.error("Firebase fetch error:", error);
+        document.getElementById('sysmsg').textContent = "Error fetching temperature";
+    }
+}
 
-// Listen for changes in real-time
-onValue(tempRef, (snapshot) => {
-  const temp = snapshot.val();
-  if (temp !== null) {
-    document.getElementById("temp").textContent = temp.toFixed(1) + " °C";
-  } else {
-    document.getElementById("temp").textContent = "-- °C";
-  }
-});
+// Refresh temperature every 5 seconds
+fetchTemperature();
+setInterval(fetchTemperature, 5000);
+</script>
