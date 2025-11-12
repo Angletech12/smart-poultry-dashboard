@@ -3,48 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Smart Poultry Dashboard</title>
-  <style>
-    body {
-      background: #0f172a;
-      color: #e2e8f0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 { color: #06b6d4; }
-    .card {
-      background: #1e293b;
-      border-radius: 10px;
-      padding: 30px;
-      width: 300px;
-      margin: 30px auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-    #temp {
-      font-size: 48px;
-      font-weight: bold;
-      color: #22d3ee;
-    }
-    #sysmsg, #last {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-    #log {
-      text-align: left;
-      background: #1e293b;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 30px auto;
-      width: 90%;
-      max-width: 600px;
-      height: 200px;
-      overflow-y: scroll;
-      font-size: 12px;
-      color: #cbd5e1;
-      white-space: pre-wrap;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -61,51 +20,7 @@
     <div id="log">Waiting for data..</div>
   </div>
 
-  <script type="module">
-    const logEl = document.getElementById('log');
-    function log(s) { 
-        let t = new Date().toLocaleTimeString(); 
-        logEl.textContent = t + '  ' + s + "\n" + logEl.textContent; 
-    }
-
-    // Firebase Realtime Database REST URL for temperature
-    const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/status/temperature.json";
-
-    async function fetchTemperature() {
-        console.log("Fetching temperature...");
-        log("Fetching temperature from Firebase...");
-
-        try {
-            const response = await fetch(FIREBASE_DB_URL, { cache: "no-cache" });
-            console.log("HTTP response status:", response.status);
-            log("HTTP response status: " + response.status);
-
-            if (!response.ok) throw new Error("Network response was not OK");
-
-            const tempObj = await response.json();
-            console.log("Fetched value from Firebase:", tempObj);
-            log("Fetched value: " + JSON.stringify(tempObj));
-
-            if (!tempObj || tempObj.temperature === undefined) {
-                document.getElementById('temp').textContent = "-- °C";
-                document.getElementById('sysmsg').textContent = "No temperature data";
-                return;
-            }
-
-            document.getElementById('temp').textContent = parseFloat(tempObj.temperature).toFixed(2) + " °C";
-            document.getElementById('last').textContent = new Date().toLocaleTimeString();
-            document.getElementById('sysmsg').textContent = "OK";
-
-        } catch (error) {
-            console.error("Firebase fetch error:", error);
-            log("Firebase fetch error: " + error);
-            document.getElementById('sysmsg').textContent = "Error fetching temperature";
-        }
-    }
-
-    // Fetch immediately, then every 5 seconds
-    fetchTemperature();
-    setInterval(fetchTemperature, 5000);
-  </script>
+  <!-- Link to the JS script -->
+  <script type="module" src="script.js"></script>
 </body>
 </html>
