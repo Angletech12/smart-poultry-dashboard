@@ -44,6 +44,7 @@ async function fetchAndUpdate() {
     } catch (err) {
         log("Error fetching status: " + err);
     }
+    
 }
 
 // Update every 2 seconds
@@ -53,61 +54,11 @@ fetchAndUpdate();
 // ----------------------------
 // MJPEG Camera Stream via Canvas
 // ----------------------------
-const canvas = document.getElementById('cameraCanvas');
-const ctx = canvas.getContext('2d');
-const CAMERA_URL = 'http://172.20.10.2/stream'; // ESP32-CAM MJPEG stream
+const cameraImg = document.getElementById('cameraFeed');
 
-let img = new Image();
+function refreshCamera() {
+    cameraImg.src = 'http://172.20.10.2/stream?time=' + new Date().getTime();
+}
 
-fetch(CAMERA_URL)
-    .then(response => {
-        const reader = response.body.getReader();
-        let buffer = new Uint8Array();
-        let boundary = null;
-
-        function readStream() {
-            reader.read().then(({ done, value }) => {
-                if (done) return;
-                let tmp = new Uint8Array(buffer.length + value.length);
-                tmp.set(buffer, 0);
-                tmp.set(value, buffer.length);
-                buffer = tmp;
-
-                let str = new TextDecoder("utf-8").decode(buffer);
-
-                if (!boundary) {
-                    const match = str.match(/--([^\r\n]+)/);
-                    if (match) boundary = match[1];
-                }
-
-                if (boundary) {
-                    const parts = str.split('--' + boundary);
-                    for (let i = 0; i < parts.length - 1; i++) {
-                        const part = parts[i];
-                        const start = part.indexOf('\r\n\r\n');
-                        if (start !== -1) {
-                            const jpgStr = part.slice(start + 4);
-                            const bytes = new Uint8Array(jpgStr.length);
-                            for (let j = 0; j < jpgStr.length; j++) bytes[j] = jpgStr.charCodeAt(j);
-                            const blob = new Blob([bytes], { type: 'image/jpeg' });
-                            const url = URL.createObjectURL(blob);
-                            img.src = url;
-                            img.onload = () => {
-                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                                URL.revokeObjectURL(url);
-                            }
-                        }
-                    }
-                    // Keep remaining buffer for next read
-                    const remaining = parts[parts.length - 1];
-                    buffer = new Uint8Array(remaining.length);
-                    for (let j = 0; j < buffer.length; j++) buffer[j] = remaining.charCodeAt(j);
-                }
-
-                readStream();
-            });
-        }
-
-        readStream();
-    })
-    .catch(err => log("MJPEG fetch error: " + err));
+// Optional: refresh every 1-2 seconds to prevent caching
+setInterval(refreshCamera, 2000);
