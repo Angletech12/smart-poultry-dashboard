@@ -1,49 +1,67 @@
 const logEl = document.getElementById('log');
-function log(msg) {
-    let t = new Date().toLocaleTimeString();
-    logEl.textContent = `${t}  ${msg}\n` + logEl.textContent;
+function log(s) { 
+    let t = new Date().toLocaleTimeString(); 
+    logEl.textContent = t + '  ' + s + "\n" + logEl.textContent; 
 }
 
-// Firebase Realtime Database REST URLs
-const FIREBASE_DB_BASE = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/main";
-const URLS = {
-    temp: `${FIREBASE_DB_BASE}/temperature.json`,
-    humidity: `${FIREBASE_DB_BASE}/humidity.json`,
-    water: `${FIREBASE_DB_BASE}/water_level.json`,
-    feed: `${FIREBASE_DB_BASE}/feed_status.json`,
-    motion: `${FIREBASE_DB_BASE}/motion_detected.json`
-};
+// Firebase Realtime Database REST URL for ESP32 data
+const FIREBASE_DB_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/main.json";
 
-// Fetch sensor data
+// Elements
+const tempEl = document.getElementById('temp');
+const humidityEl = document.getElementById('humidity');
+const waterEl = document.getElementById('waterStatus');
+const feederEl = document.getElementById('feederWeight');
+const containerEl = document.getElementById('containerWeight');
+const motionEl = document.getElementById('motionStatus');
+
+const snapshotBtn = document.getElementById('snapshotBtn');
+const videoBtn = document.getElementById('videoBtn');
+
+// Fetch data from Firebase
 async function fetchData() {
-    for (const [key, url] of Object.entries(URLS)) {
-        try {
-            const res = await fetch(url, {cache: "no-cache"});
-            const data = await res.json();
-            document.getElementById(key).textContent = data !== null ? data : "--";
-            log(`Updated ${key}: ${data}`);
-        } catch (err) {
-            console.error(`Error fetching ${key}:`, err);
-            log(`Error fetching ${key}: ${err}`);
-        }
+    try {
+        const res = await fetch(FIREBASE_DB_URL + '?cacheBuster=' + new Date().getTime());
+        if (!res.ok) throw new Error("Network response not ok");
+        const data = await res.json();
+
+        tempEl.textContent = data.temperature?.toFixed(2) + " °C" || "-- °C";
+        humidityEl.textContent = data.humidity?.toFixed(2) + " %" || "-- %";
+        waterEl.textContent = data.water_level ? "OK" : "Low";
+        feederEl.textContent = data.feed_status?.toFixed(2) || "--";
+        containerEl.textContent = data.feed_container_status?.toFixed(2) || "--";
+        motionEl.textContent = data.motion_detected ? "Yes" : "No";
+
+    } catch (err) {
+        log("Fetch error: " + err);
     }
 }
 
-// Update every 5 seconds
+// Refresh every 5 seconds
 fetchData();
 setInterval(fetchData, 5000);
 
-// Camera stream setup
-const camStream = document.getElementById('camStream');
-camStream.src = 'http://<ESP32_CAM_IP>/stream'; // replace with your ESP32-CAM IP stream
-
-// Snap photo button
-document.getElementById('snapPhoto').addEventListener('click', async () => {
-    try {
-        await fetch('http://<ESP32_CAM_IP>/capture'); // replace with your ESP32-CAM capture endpoint
-        log("Photo taken and sent!");
-    } catch (err) {
-        console.error("Photo capture error:", err);
-        log("Photo capture error: " + err);
-    }
+// Button actions
+snapshotBtn.addEventListener('click', async () => {
+    await sendCommand({ snapshot: true });
+    log("Snapshot command sent");
 });
+
+videoBtn.addEventListener('click', async () => {
+    await sendCommand({ recordVideo: 30 }); // 30 seconds
+    log("30s video command sent");
+});
+
+// Send command to Firebase
+async function sendCommand(cmd) {
+    try {
+        const res = await fetch("https://smart-poultry-system-df992-default-rtdb.firebaseio.com/camCommands.json", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cmd)
+        });
+        if (!res.ok) throw new Error("Failed to send command");
+    } catch (err) {
+        log("Command error: " + err);
+    }
+}
