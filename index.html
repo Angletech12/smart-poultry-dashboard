@@ -9,45 +9,50 @@
       color: #e2e8f0;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 50px;
     }
     h1 { color: #06b6d4; }
     .card {
       background: #1e293b;
       border-radius: 10px;
-      padding: 20px;
-      width: 350px;
-      margin: 20px auto;
+      padding: 30px;
+      width: 300px;
+      margin: 30px auto;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-    #temp, #humidity, #waterStatus, #motionStatus, #feederWeight, #containerWeight {
-      font-size: 24px;
+    #temp, #humidity {
+      font-size: 48px;
       font-weight: bold;
       color: #22d3ee;
     }
+    .camera-box {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 20px;
+      width: 500px;
+      margin: 30px auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
     button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
+      background: #06b6d4;
       border: none;
-      background-color: #06b6d4;
       color: #fff;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 5px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #0891b2;
+      background: #0891b2;
     }
-    #log {
-      background: #0f172a;
-      color: #e2e8f0;
-      text-align: left;
-      max-height: 150px;
-      overflow-y: scroll;
-      padding: 10px;
-      font-size: 12px;
-      border: 1px solid #22d3ee;
+    #cameraFeed {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
       margin-top: 10px;
+    }
+    .status-line {
+      margin: 5px 0;
     }
   </style>
 </head>
@@ -56,30 +61,32 @@
   <h1>Smart Poultry System</h1>
 
   <div class="card">
-    <h2>Temperature & Humidity</h2>
+    <h2>Temperature</h2>
     <div id="temp">-- °C</div>
+    <h2>Humidity</h2>
     <div id="humidity">-- %</div>
   </div>
 
   <div class="card">
     <h2>Water & Feed Status</h2>
-    <div>Water Level: <span id="waterStatus">--</span></div>
-    <div>Feeder Weight: <span id="feederWeight">--</span></div>
-    <div>Container Weight: <span id="containerWeight">--</span></div>
+    <div class="status-line">Water Level: <span id="waterStatus">--</span></div>
+    <div class="status-line">Feeder Weight: <span id="feederWeight">--</span></div>
+    <div class="status-line">Container Weight: <span id="containerWeight">--</span></div>
+    <div class="status-line">Motion Detected: <span id="motionStatus">--</span></div>
   </div>
 
-  <div class="card">
-    <h2>Security</h2>
-    <div>Motion Detected: <span id="motionStatus">--</span></div>
-    <button id="snapshotBtn">Take Snapshot</button>
-    <button id="videoBtn">Record 30s Clip</button>
+  <div class="camera-box">
+    <h2>Camera Feed</h2>
+    <img id="cameraFeed" src="" alt="Camera feed loading...">
+    <div>
+      <button id="snapshotBtn">Take Snapshot</button>
+      <button id="recordBtn">Record 30s Clip</button>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Debug Log</h2>
-    <pre id="log">Waiting for data...</pre>
-  </div>
+  <pre id="log" style="text-align:left; max-width:500px; margin:auto;"></pre>
 
+  <!-- Link to your JavaScript -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
