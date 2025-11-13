@@ -81,14 +81,14 @@
     <div class="status-line">Motion Detected: <span id="motionStatus">--</span></div>
   </div>
 
- <div class="camera-box">
+<div class="camera-box">
   <h2>Camera Feed</h2>
-  <iframe 
-    src="http://172.20.10.2:81/" 
+  <img 
+    id="cameraFeed" 
+    src="http://172.20.10.2/stream" 
+    alt="Camera feed loading..." 
     width="500" 
-    height="375" 
-    style="border:none; border-radius:10px;">
-  </iframe>
+    style="border-radius:10px;">
 </div>
     <button id="snapshotBtn">Take Snapshot</button>
     <button id="recordBtn">Record 30s Clip</button>
