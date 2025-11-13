@@ -9,49 +9,45 @@
       color: #e2e8f0;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 30px;
     }
     h1 { color: #06b6d4; }
     .card {
       background: #1e293b;
       border-radius: 10px;
       padding: 20px;
-      width: 320px;
+      width: 350px;
       margin: 20px auto;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-    #temp, #humidity, #water, #feed, #motion {
-      font-size: 28px;
+    #temp, #humidity, #waterStatus, #motionStatus, #feederWeight, #containerWeight {
+      font-size: 24px;
       font-weight: bold;
       color: #22d3ee;
     }
-    video {
-      width: 320px;
-      height: 240px;
-      margin-top: 10px;
-      border: 2px solid #22d3ee;
-    }
     button {
+      margin: 10px;
       padding: 10px 20px;
-      margin: 5px;
-      border: none;
+      font-size: 16px;
       border-radius: 5px;
+      border: none;
       background-color: #06b6d4;
       color: #fff;
-      font-weight: bold;
       cursor: pointer;
+    }
+    button:hover {
+      background-color: #0891b2;
     }
     #log {
       background: #0f172a;
       color: #e2e8f0;
-      font-family: monospace;
-      font-size: 12px;
       text-align: left;
-      max-height: 200px;
+      max-height: 150px;
       overflow-y: scroll;
       padding: 10px;
+      font-size: 12px;
       border: 1px solid #22d3ee;
-      margin-top: 20px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -60,40 +56,30 @@
   <h1>Smart Poultry System</h1>
 
   <div class="card">
-    <h2>Temperature</h2>
+    <h2>Temperature & Humidity</h2>
     <div id="temp">-- °C</div>
-  </div>
-
-  <div class="card">
-    <h2>Humidity</h2>
     <div id="humidity">-- %</div>
   </div>
 
   <div class="card">
-    <h2>Water Level</h2>
-    <div id="water">--</div>
+    <h2>Water & Feed Status</h2>
+    <div>Water Level: <span id="waterStatus">--</span></div>
+    <div>Feeder Weight: <span id="feederWeight">--</span></div>
+    <div>Container Weight: <span id="containerWeight">--</span></div>
   </div>
 
   <div class="card">
-    <h2>Feed Status</h2>
-    <div id="feed">--</div>
+    <h2>Security</h2>
+    <div>Motion Detected: <span id="motionStatus">--</span></div>
+    <button id="snapshotBtn">Take Snapshot</button>
+    <button id="videoBtn">Record 30s Clip</button>
   </div>
 
   <div class="card">
-    <h2>Motion Detection</h2>
-    <div id="motion">--</div>
+    <h2>Debug Log</h2>
+    <pre id="log">Waiting for data...</pre>
   </div>
 
-  <div class="card">
-    <h2>Camera Stream</h2>
-    <video id="camStream" autoplay playsinline></video>
-    <br>
-    <button id="snapPhoto">Take Photo</button>
-  </div>
-
-  <div id="log">Debug Log<br>Waiting for data..</div>
-
-  <!-- Link to JavaScript -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
