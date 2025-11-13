@@ -9,46 +9,49 @@
       color: #e2e8f0;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 20px;
     }
     h1 { color: #06b6d4; }
     .card {
       background: #1e293b;
       border-radius: 10px;
-      padding: 30px;
-      width: 300px;
-      margin: 30px auto;
+      padding: 20px;
+      width: 320px;
+      margin: 20px auto;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-    #temp {
-      font-size: 48px;
+    #temp, #humidity, #water, #feed, #motion {
+      font-size: 28px;
       font-weight: bold;
       color: #22d3ee;
     }
-    #motion {
-      font-size: 36px;
-      font-weight: bold;
-      color: #facc15; /* yellow for motion */
-    }
-    #sysmsg {
+    video {
+      width: 320px;
+      height: 240px;
       margin-top: 10px;
-      font-size: 16px;
-      color: #f87171; /* red for error */
+      border: 2px solid #22d3ee;
     }
-    #last {
-      margin-top: 5px;
-      font-size: 14px;
-      color: #94a3b8; /* gray */
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #06b6d4;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
     }
     #log {
-      margin-top: 20px;
-      text-align: left;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: monospace;
       font-size: 12px;
-      height: 120px;
+      text-align: left;
+      max-height: 200px;
       overflow-y: scroll;
-      background: #1e293b;
       padding: 10px;
-      border-radius: 5px;
+      border: 1px solid #22d3ee;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -62,17 +65,35 @@
   </div>
 
   <div class="card">
+    <h2>Humidity</h2>
+    <div id="humidity">-- %</div>
+  </div>
+
+  <div class="card">
+    <h2>Water Level</h2>
+    <div id="water">--</div>
+  </div>
+
+  <div class="card">
+    <h2>Feed Status</h2>
+    <div id="feed">--</div>
+  </div>
+
+  <div class="card">
     <h2>Motion Detection</h2>
     <div id="motion">--</div>
   </div>
 
-  <div id="sysmsg">Loading...</div>
-  <div id="last">--:--:--</div>
+  <div class="card">
+    <h2>Camera Stream</h2>
+    <video id="camStream" autoplay playsinline></video>
+    <br>
+    <button id="snapPhoto">Take Photo</button>
+  </div>
 
-  <h3>Debug Log</h3>
-  <pre id="log">Waiting for data..</pre>
+  <div id="log">Debug Log<br>Waiting for data..</div>
 
-  <!-- Link to JS -->
+  <!-- Link to JavaScript -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
