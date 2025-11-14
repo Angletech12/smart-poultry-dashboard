@@ -1,7 +1,13 @@
 // ----------------------------
-// Dashboard URLs
+// Firebase Realtime DB Status URL
 // ----------------------------
 const STATUS_URL = "https://smart-poultry-system-df992-default-rtdb.firebaseio.com/status.json";
+
+// ----------------------------
+// Firebase Camera Proxy Stream
+// ----------------------------
+// Replace this with your deployed Firebase function URL:
+const CAMERA_STREAM_URL = "https://us-central1-smart-poultry-system.cloudfunctions.net/cameraStream";
 
 // ----------------------------
 // Dashboard elements
@@ -12,30 +18,30 @@ const waterEl = document.getElementById('waterStatus');
 const feederEl = document.getElementById('feederWeight');
 const containerEl = document.getElementById('containerWeight');
 const motionEl = document.getElementById('motionStatus');
-
 const logEl = document.getElementById('log');
+const cameraImg = document.getElementById("cameraFeed");
 
 // ----------------------------
-// Logging function
+// Logger
 // ----------------------------
 function log(msg) {
     const t = new Date().toLocaleTimeString();
-    if (logEl) logEl.textContent = t + '  ' + msg + '\n' + logEl.textContent;
-    console.log(msg);
+    logEl.textContent = ${t}  ${msg}\n + logEl.textContent;
 }
 
 // ----------------------------
-// Fetch and update dashboard
+// Fetch & update dashboard
 // ----------------------------
 async function fetchAndUpdate() {
     try {
         const res = await fetch(STATUS_URL, { cache: "no-cache" });
         if (!res.ok) throw new Error("HTTP " + res.status);
+
         const data = await res.json();
         if (!data) return;
 
-        tempEl.textContent = data.temperature !== undefined ? parseFloat(data.temperature).toFixed(2) + " °C" : "--";
-        humEl.textContent = data.humidity !== undefined ? parseFloat(data.humidity).toFixed(2) + " %" : "--";
+        tempEl.textContent = data.temperature !== undefined ? ${parseFloat(data.temperature).toFixed(2)} °C : "--";
+        humEl.textContent = data.humidity !== undefined ? ${parseFloat(data.humidity).toFixed(2)} % : "--";
         waterEl.textContent = data.water_level !== undefined ? (data.water_level ? "OK" : "Low") : "--";
         feederEl.textContent = data.feed_status !== undefined ? parseFloat(data.feed_status).toFixed(2) : "--";
         containerEl.textContent = data.feed_container_status !== undefined ? parseFloat(data.feed_container_status).toFixed(2) : "--";
@@ -44,21 +50,16 @@ async function fetchAndUpdate() {
     } catch (err) {
         log("Error fetching status: " + err);
     }
-    
 }
 
-// Update every 2 seconds
 setInterval(fetchAndUpdate, 2000);
 fetchAndUpdate();
 
 // ----------------------------
-// MJPEG Camera Stream via Canvas
+// Camera Stream (via Firebase)
 // ----------------------------
-const cameraImg = document.getElementById('cameraFeed');
-
-function refreshCamera() {
-    cameraImg.src = 'http://172.20.10.2/stream?time=' + new Date().getTime();
+function startCameraStream() {
+    cameraImg.src = CAMERA_STREAM_URL;
 }
 
-// Optional: refresh every 1-2 seconds to prevent caching
-setInterval(refreshCamera, 2000);
+startCameraStream();
