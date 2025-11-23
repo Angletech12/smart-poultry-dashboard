@@ -84,7 +84,8 @@
 
   <div class="camera-box">
     <h2>Camera Feed</h2>
-    <img id="cameraFeed" src="">
+    <img id="cameraFeed" src="https://esp32cam-relay-production-c868.up.railway.app/stream"
+     onerror="retryStream()">
   </div>
 
   <button id="snapshotBtn">Take Snapshot</button>
